@@ -1,14 +1,10 @@
 namespace Microsoft.HpcAcm.Frontend
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Options;
     using Serilog;
 
     public class Startup
@@ -25,10 +21,11 @@ namespace Microsoft.HpcAcm.Frontend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+           
             services.AddCors();
-            services.AddMvc().AddJsonOptions(options => {
-                options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+            services.AddMvc(x => x.EnableEndpointRouting = false).AddJsonOptions(options => {
+                options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+                options.JsonSerializerOptions.IgnoreNullValues = true;
             });
         }
 
@@ -52,7 +49,6 @@ namespace Microsoft.HpcAcm.Frontend
             );
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
-            app.UseMvc();
         }
     }
 }
